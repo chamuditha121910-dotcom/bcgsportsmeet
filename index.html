@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Time Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Basic styles for the new button layout */
+    .container button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .side-buttons {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+    }
+    /* Style for the vertical progress line */
+    #daily-target-line-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 15px;
+        height: 100vh;
+        background-color: #eee;
+    }
+    #daily-target-line {
+        width: 100%;
+        background-color: #28a745; /* Green default */
+        transition: height 0.5s ease-out;
+        position: absolute;
+        bottom: 0;
+    }
+    .dark-mode #daily-target-line-container { background-color: #333; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Study Time Tracker</h1>
+  </div>
+    
+  <button id="theme-toggle" class="theme-btn" style="top: 850px; right: 15px;">
+    <span id="theme-icon">🌙</span>
+  </button>
+  <div class="container">
+    <font size="700"><b>
+        <div id="time-display" class="datetime-display"></div></b></font>
+    <h2><div id="date-display" class="datetime-display"></div></h2>
+    
+    <div id="current-task"></div>
+
+    </div>
+
+     <div class="container">
+      
+    <button onclick="location.href='manual.html'">Manual Entry</button>
+    <button onclick="location.href='automatic.html'">Automatic Stopwatch</button>
+    <button onclick="location.href='target.html'">Daily Target</button> 
+  </div>
+
+  <div class="container">
+      
+    <button onclick="location.href='timer.html'">Timer</button>
+    <button onclick="location.href='analysis.html'">Analysis</button>
+  </div>
+
+  <div class="side-buttons">
+    <button onclick="toggleFullScreen()" title="Full Screen">⛶</button> 
+    <button onclick="location.href='calendar.html'" title="View Calendar">🗓️</button>
+    <button onclick="location.href='timetable.html'" title="Time Table">📅</button>
+    
+    <button onclick="location.href='school_calendar.html'" title="School Calendar" style="background: #28a745;">🏫</button>
+</div>
+  
+  <div id="daily-target-line-container">
+    <div id="daily-target-line" style="height: 0%;"></div>
+  </div>
+
+  <script>
+    const targetTimeMinutes = 12 * 60; // 12 hours in minutes
+    let lastDateKey = null; // To track if the day has changed
+    
+    // --- Dark Mode Logic ---
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function loadTheme() {
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '☀️';
+        }
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        let isDark = document.body.classList.contains('dark-mode');
+        themeIcon.textContent = isDark ? '☀️' : '🌙';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateTargetLine(); // Refresh line style
+    });
+    // --- End Dark Mode Logic ---
+
+
+    function getTodayKey() {
+      return new Date().toISOString().split('T')[0];
+    }
+    
+    // Utility function to load daily study data
+    function loadDailyData(key) {
+        let data = JSON.parse(localStorage.getItem(key));
+        if (data && data['total']) {
+            return data['total']; // Returns an array of daily minute entries
+        }
+        return [0]; // Default to 0 minutes
+    }
+    
+    function formatTime(sec) {
+      let h = String(Math.floor(sec / 3600)).padStart(2, '0');
+      let m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+      let s = String(sec % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+    
+    function loadTimetable() {
+        // Default structure for timetable storage
+        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const defaultTimetable = {};
+        dayNames.forEach(day => defaultTimetable[day] = []);
+        
+        // Load from localStorage or use default
+        return JSON.parse(localStorage.getItem('weeklyTimetable')) || defaultTimetable;
+    }
+
+    // Feature 1: Vertical Progress Line on the left (Daily target time line)
+    window.updateTargetLine = function() {
+        const todayKey = getTodayKey();
+        const dailyTimeEntries = loadDailyData(todayKey);
+        const totalMinutes = dailyTimeEntries.reduce((sum, current) => sum + current, 0);
+
+        // Calculate progress as a percentage (capped at 100%)
+        let progress = (totalMinutes / targetTimeMinutes) * 100;
+        if (progress > 100) progress = 100;
+
+        const targetLine = document.getElementById('daily-target-line');
+        targetLine.style.height = `${progress}%`;
+        
+        // Change color based on progress
+        if (progress < 15) {
+            targetLine.style.background = '#c20000'; // Red
+        } else if (progress < 25) {
+            targetLine.style.background = '#db6100'; // Orange
+        } else if (progress < 50) {
+            targetLine.style.background = '#ffc107'; // Yellow
+        } else if (progress < 75) {
+            targetLine.style.background = '#b2e000'; // Light Green
+        } else if (progress < 100) {
+            targetLine.style.background = '#28a745'; // Green
+        } else {
+            targetLine.style.background = '#007bff'; // Blue (for 100%+)
+        }
+    }
+    
+    // Feature 2: Full Screen Toggle
+    window.toggleFullScreen = function() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            localStorage.setItem('fullscreen', 'true');
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+            localStorage.setItem('fullscreen', 'false');
+        }
+    }
+
+    // Check for fullscreen on load (to maintain state across reloads/navigations)
+    function checkFullScreenOnLoad() {
+        if (localStorage.getItem('fullscreen') === 'true' && !document.fullscreenElement) {
+             // Attempt to re-enter fullscreen if user preferred it, though browser policies might block this without a user action.
+             console.log("Fullscreen preference detected, but auto-entry is usually blocked by browsers.");
+        }
+    }
+    
+    // Feature 3: Live Time and Date + Check for day change
+    function updateDateTime() {
+        const now = new Date();
+        
+        // 1. Update Time and Date Display
+        const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        document.getElementById('time-display').textContent = timeStr;
+        document.getElementById('date-display').textContent = dateStr;
+        
+        // 2. Check for day change
+        const currentKey = getTodayKey();
+        if (currentKey !== lastDateKey) {
+            lastDateKey = currentKey;
+            updateTargetLine(); // Refresh target line on new day
+            updateCurrentTask(); // Refresh scheduled task
+        }
+    }
+    
+    // Feature 4: Display Current Scheduled Task
+    function updateCurrentTask() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentDay = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+        
+        // Map JS getDay() to our time table's dayNames array ('Mon', 'Tue', ...)
+        let dayOfWeekIndex = (currentDay === 0) ? 6 : currentDay - 1; // 0=Mon, 6=Sun
+        
+        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const todayName = dayNames[dayOfWeekIndex];
+        
+        const timetable = loadTimetable();
+        const todaySchedule = timetable[todayName] || [];
+        
+        const currentTaskDiv = document.getElementById('current-task');
+        let foundTask = 'No scheduled work right now.';
+        
+        // Determine the current 30-minute time slot: XX:00 for minutes 0-29, XX:30 for minutes 30-59
+        const minuteSegment = currentMinute < 30 ? '00' : '30';
+        const displayHour = String(currentHour).padStart(2, '0');
+        const currentTimeSlot = `${displayHour}:${minuteSegment}`;
+
+        for (const slot of todaySchedule) {
+            if (slot.time === currentTimeSlot) {
+                if (slot.work && slot.work.trim() !== '') {
+                    foundTask = `Currently Scheduled (${slot.time}): <strong>${slot.work}</strong>`;
+                }
+                break;
+            }
+        }
+        
+        currentTaskDiv.innerHTML = foundTask;
+    }
+
+    // Initial load and set interval for features
+    loadTheme();
+    updateDateTime(); // Also sets lastDateKey and runs updateTargetLine for the first time
+    updateCurrentTask();
+    checkFullScreenOnLoad(); // Check for fullscreen on load
+    
+    setInterval(updateDateTime, 1000); // Update clock every second and check for day change
+    setInterval(updateTargetLine, 60000); // Update progress line every minute
+    setInterval(updateCurrentTask, 30000); // Check for task change every 30 seconds
+  </script>
+</body>
+</html>

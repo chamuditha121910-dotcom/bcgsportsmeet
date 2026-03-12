@@ -1,0 +1,450 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  text-align: center;
+  color: #333; /* Default text color */
+  margin: 0;
+  padding: 0;
+}
+
+/* Theme Toggle Button */
+.theme-btn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #c0c0c0;
+}
+
+body.dark-mode .container {
+    background: #1e1e1e;
+}
+
+body.dark-mode .day {
+  border-color: #444;
+  background: #282828;
+}
+
+body.dark-mode .day:hover {
+    background: #333;
+}
+
+/* Common Container */
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Buttons and Inputs */
+button {
+  margin: 5px;
+  padding: 10px 20px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover { background: #0056b3; }
+input, select {
+  padding: 8px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+body.dark-mode input, body.dark-mode select {
+    background: #333;
+    border-color: #555;
+    color: #c0c0c0;
+}
+
+/* Index Page Layout (New Features) */
+.side-buttons {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 999;
+}
+.side-buttons button {
+    font-size: 24px;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Style for school time indication on calendar cells */
+.school-time-mini-bar {
+    height: 4px;
+    background-color: #007bff; /* Blue for school */
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+/* Daily Target Vertical Progress Line */
+#daily-target-line-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 15px; /* Thin line on the left */
+    background: #e0e0e0; /* Background of the line */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    z-index: 998;
+}
+#daily-target-line {
+    width: 100%;
+    background: green; /* Green line */
+    position: absolute;
+    bottom: 0;
+    transition: height 0.3s ease-out;
+}
+body.dark-mode #daily-target-line-container {
+    background: #333;
+}
+
+/* Current Task Display on Index Page */
+#current-task {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px dashed #007bff;
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+body.dark-mode #current-task {
+    border-color: #0099ff;
+    color: #0099ff;
+}
+#current-task strong {
+    color: green;
+}
+body.dark-mode #current-task strong {
+    color: #99ff99;
+}
+
+/* Timetable Styles */
+.timetable-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.timetable-table th, .timetable-table td {
+  border: 1px solid #ccc;
+  padding: 0; /* Padding is inside the input for editing */
+  text-align: center;
+  height: 35px;
+}
+.timetable-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  padding: 5px;
+}
+.timetable-table td input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  padding: 5px;
+  text-align: center;
+  background: transparent;
+}
+.timetable-table td:first-child {
+  font-weight: bold;
+  background-color: #f9f9f9;
+}
+
+body.dark-mode .timetable-table th {
+  background-color: #333;
+  color: #c0c0c0;
+}
+body.dark-mode .timetable-table td {
+  border-color: #444;
+}
+body.dark-mode .timetable-table td:first-child {
+  background-color: #282828;
+}
+
+
+/* Calendar Styles (Color Coding for Study Time) */
+.calendar-container {
+    margin: 20px auto;
+}
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.day {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+  min-height: 60px;
+  position: relative;
+  background: #fff;
+  cursor: pointer;
+}
+.day:hover {
+  background: #f0f0f0;
+}
+.day-name {
+  font-weight: bold;
+  padding: 5px 0;
+}
+.day-date {
+    font-size: 18px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+.day-placeholder {
+    /* Empty space for alignment */
+}
+
+/* Calendar Progress Indicators */
+.progress-bar-small {
+    height: 5px;
+    background: #28a745;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+.time-text-small {
+    font-size: 10px;
+    color: #666;
+}
+body.dark-mode .time-text-small {
+    font-size: 10px;
+    color: #b6b6b6;
+}
+.day-partial {
+    background-color: #fffacd; /* Light Yellow for partial completion */
+}
+body.dark-mode .day-partial {
+    background-color: #44370a;
+}
+.day-complete {
+    background-color: #c3ffc3; /* Light Green for full completion */
+}
+body.dark-mode .day-complete {
+    background-color: #1e381e;
+}
+.day-today {
+    border: 3px solid #007bff; /* Highlight today */
+}
+body.dark-mode .day-today {
+    border-color: #0099ff;
+}
+
+/* --- Theme Toggle Button --- */
+.theme-btn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* --- Dark Mode Styles for Charts and General Elements --- */
+
+/* Base Dark Mode: already in your file, ensuring it covers the new pages */
+body.dark-mode {
+  background-color: #121212;
+  color: #c0c0c0;
+}
+
+body.dark-mode .container {
+    background: #1e1e1e;
+}
+
+body.dark-mode button {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
+}
+
+/* Styles for Chart Containers in Dark Mode */
+.chart-container {
+    background-color: #f9f9f9; /* Light background for chart area in Light Mode */
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+body.dark-mode .chart-container {
+    background-color: #282828; /* Dark background for chart area in Dark Mode */
+    border-color: #444;
+}
+
+/* Dark mode for data tables (used in entry pages) */
+body.dark-mode .data-table th, 
+body.dark-mode .data-table td {
+    border-color: #444;
+}
+
+body.dark-mode .test-entry-form input, 
+body.dark-mode .test-entry-form select {
+    background-color: #333;
+    color: #c0c0c0;
+    border-color: #555;
+}
+
+/* Calendar Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: left;
+}
+body.dark-mode .modal-content {
+    background-color: #1e1e1e;
+    border-color: #444;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+.summary-section {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+body.dark-mode .summary-section {
+    border-color: #333;
+}
+.summary-section ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Automatic Stopwatch Horizontal Progress Bar */
+#target-line-container-auto {
+    position: relative;
+    height: 30px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    margin: 15px 0;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+#target-line-auto {
+    height: 100%;
+    width: 0%; /* Initial width */
+    background: #28a745; /* Green color for progress */
+    transition: width 0.1s linear;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#target-progress-text-auto {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 30px;
+    color: #333;
+    font-weight: bold;
+    text-shadow: 0 0 2px white;
+    z-index: 10;
+}
+body.dark-mode #target-line-container-auto {
+    background: #333;
+}
+body.dark-mode #target-progress-text-auto {
+    color: #fff;
+    text-shadow: 0 0 2px black;
+}
+
+/* Manual Entry History Styles */
+#manual-entries {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    text-align: left;
+}
+.entry-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+body.dark-mode .entry-item {
+    border-color: #333;
+}
+.entry-item:last-child {
+    border-bottom: none;
+}
+.entry-time {
+    font-size: 1.1em;
+}
+.delete-btn {
+    background: inherit;
+    color: #dc3545;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: normal;
+    opacity: 0.7;
+}
+.delete-btn:hover {
+    opacity: 1.0;
+    text-decoration: underline;
+}
